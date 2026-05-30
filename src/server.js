@@ -1,9 +1,11 @@
-require('dotenv').config();
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 const express = require('express');
 const cors = require('cors');
 const connectDB = require('./config/db');
 const authRoutes = require('./routes/authRoutes');
 const familyRoutes = require('./routes/familyRoutes');
+const uploadRoutes = require('./routes/uploadRoutes');
 const userRoutes = require('./routes/userRoutes');
 const errorHandler = require('./middleware/errorHandler');
 const User = require('./models/User');
@@ -22,15 +24,16 @@ app.use(
     credentials: true,
   })
 );
-app.use(express.json({ limit: '2mb' }));
+app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
 app.get('/api/health', (req, res) => {
-  res.json({ success: true, message: 'Soni Samaj API is running' });
+  res.json({ success: true, message: 'Soni Samaj Uttarbhartiya Trust Surat API is running' });
 });
 
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/upload', uploadRoutes);
 app.use('/api/families', familyRoutes);
 
 app.use(errorHandler);
@@ -71,6 +74,13 @@ const startServer = async () => {
       throw new Error('JWT_SECRET is required in .env');
     }
     await seedFirstAdmin();
+    const { isCloudinaryConfigured } = require('./config/cloudinary');
+    if (!isCloudinaryConfigured()) {
+      console.warn(
+        'Cloudinary is not configured — photo upload (POST /api/upload) will return 503. ' +
+          'Set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET in backend/.env'
+      );
+    }
     app.listen(PORT, () => {
       console.log(`Server running on http://localhost:${PORT}`);
     });

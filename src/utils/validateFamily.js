@@ -6,11 +6,26 @@ const isValidPincode = (pincode) => /^[1-9]\d{5}$/.test(String(pincode || '').tr
 
 const isValidEmail = (email) => !email || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
+const VALID_MARITAL_STATUSES = ['Married', 'Unmarried', 'Widowed', 'Divorced'];
+
+const isSpouseRequired = (status) => status === 'Married';
+
 const validateFamilyBody = (body) => {
   const errors = [];
 
   if (!body.headOfFamily?.name?.trim()) {
     errors.push('Head of family name is required');
+  }
+
+  if (!body.headOfFamily?.photo?.trim()) {
+    errors.push('Head of family photo is required');
+  }
+
+  const maritalStatus = body.headOfFamily?.maritalStatus;
+  if (!maritalStatus) {
+    errors.push('Marital status is required');
+  } else if (!VALID_MARITAL_STATUSES.includes(maritalStatus)) {
+    errors.push('Select a valid marital status');
   }
 
   const mobile = normalizeMobile(body.headOfFamily?.mobile);
@@ -31,6 +46,20 @@ const validateFamilyBody = (body) => {
     errors.push('Pincode is required');
   } else if (!isValidPincode(body.address.pincode)) {
     errors.push('Pincode must be a valid 6-digit Indian pincode');
+  }
+
+  if (isSpouseRequired(maritalStatus)) {
+    if (!body.spouse?.name?.trim()) {
+      errors.push('Spouse name is required when marital status is Married');
+    }
+    const spouseMobile = normalizeMobile(body.spouse?.mobile);
+    if (!spouseMobile) {
+      errors.push('Spouse mobile is required when marital status is Married');
+    } else if (!isValidMobile(spouseMobile)) {
+      errors.push('Enter a valid spouse mobile number');
+    }
+  } else if (body.spouse?.mobile && !isValidMobile(body.spouse.mobile)) {
+    errors.push('Enter a valid spouse mobile number');
   }
 
   if (!body.parents?.father?.name?.trim()) errors.push("Father's name is required");

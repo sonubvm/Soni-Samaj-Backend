@@ -7,6 +7,16 @@ const parentSchema = new mongoose.Schema(
     income: { type: Number, default: 0, min: 0 },
     education: { type: String, default: '', trim: true },
     mobile: { type: String, default: '', trim: true },
+    photo: { type: String, default: '', trim: true },
+  },
+  { _id: false }
+);
+
+const spouseSchema = new mongoose.Schema(
+  {
+    name: { type: String, default: '', trim: true },
+    mobile: { type: String, default: '', trim: true },
+    photo: { type: String, default: '', trim: true },
   },
   { _id: false }
 );
@@ -18,6 +28,7 @@ const coResidentSchema = new mongoose.Schema(
     age: { type: Number, min: 0 },
     occupation: { type: String, default: '', trim: true },
     mobile: { type: String, default: '', trim: true },
+    photo: { type: String, default: '', trim: true },
   },
   { _id: true }
 );
@@ -27,6 +38,7 @@ const childSchema = new mongoose.Schema(
     name: { type: String, required: true, trim: true },
     gender: { type: String, enum: ['Male', 'Female', 'Other'], default: 'Male' },
     dob: { type: Date },
+    photo: { type: String, default: '', trim: true },
     studentType: { type: String, enum: ['School', 'College'], default: 'School' },
     school: {
       name: { type: String, default: '', trim: true },
@@ -48,6 +60,12 @@ const familySchema = new mongoose.Schema(
       name: { type: String, required: true, trim: true },
       mobile: { type: String, required: true, trim: true },
       email: { type: String, default: '', trim: true, lowercase: true },
+      photo: { type: String, default: '', trim: true },
+      maritalStatus: {
+        type: String,
+        enum: ['Married', 'Unmarried', 'Widowed', 'Divorced'],
+        default: 'Unmarried',
+      },
     },
     address: {
       houseNo: { type: String, default: '', trim: true },
@@ -62,6 +80,7 @@ const familySchema = new mongoose.Schema(
       father: { type: parentSchema, required: true },
       mother: { type: parentSchema, required: true },
     },
+    spouse: { type: spouseSchema, default: () => ({}) },
     coResidents: [coResidentSchema],
     children: [childSchema],
     totalFamilyIncome: { type: Number, default: 0, min: 0 },

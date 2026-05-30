@@ -55,6 +55,20 @@ const createFamily = async (req, res, next) => {
       body.children = body.children.filter((c) => c?.name?.trim());
     }
 
+    if (
+      body.spouse &&
+      !body.spouse.name?.trim() &&
+      !body.spouse.mobile?.trim() &&
+      !body.spouse.photo?.trim()
+    ) {
+      delete body.spouse;
+    }
+
+    const spouseRelevant = ['Married', 'Widowed'].includes(body.headOfFamily?.maritalStatus);
+    if (!spouseRelevant) {
+      delete body.spouse;
+    }
+
     const validationErrors = validateFamilyBody(body);
     if (validationErrors.length > 0) {
       return res.status(400).json({ success: false, message: validationErrors.join(', ') });

@@ -1,7 +1,7 @@
 {
   "name": "soni-samaj-backend",
   "version": "1.0.0",
-  "description": "Soni Samaj Family Data Collection API",
+  "description": "Soni Samaj Uttarbhartiya Trust Surat Family Data Collection API",
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",

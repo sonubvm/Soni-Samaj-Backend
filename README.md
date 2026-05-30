@@ -1,4 +1,4 @@
-# Soni Samaj Backend API
+# Soni Samaj Uttarbhartiya Trust Surat Backend API
 
 See root [README](../README.md) for full setup.
 
